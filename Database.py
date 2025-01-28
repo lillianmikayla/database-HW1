@@ -1,13 +1,21 @@
 import csv
 import os.path
 
+
 class DB:
 
     #default constructor
     def __init__(self):
         self.filestream = None
-        self.numRecords = -1
-        self.recordSize = -1
+        self.numRecords = 0
+        self.recordSize = 0
+        self.dataFileptr = None
+        self.openFlag = False
+        
+    #open: public method
+    def open(colleges):
+        #open file
+        #update values
 
     
     # Formatting files with spaces so each field is fixed length, i.e. ID field has a fixed length of 10
