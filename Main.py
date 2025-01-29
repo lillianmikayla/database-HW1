@@ -3,8 +3,6 @@ import os.path
 from Database import DB
 
 def main():
-    #variables
-    filename = "small-colleges"
 
     db = DB() #create an instance of the DB class
 
@@ -25,7 +23,8 @@ def main():
         choice = input("Enter choice: ")
 
         if choice == "1":
-            # filename = input("Enter the filename to create: ")
+            filename = "small-colleges" # temporary, will remove this and uncomment line below before submission
+            # filename = input("Enter filename: ")
             db.createDB(filename)
         elif choice == "2":
             db.open_database()

@@ -26,6 +26,7 @@ class DB:
     # Formatting files with spaces so each field is fixed length, i.e. ID field has a fixed length of 10
     def writeRecord(self, filestream, id, state, city, name):
         try:
+            self.recordSize = 101 # 10 + 20 + 20 + 50 + 1 (1 is for the new line character)
 
             filestream.write("{:10.10}".format(id))
             filestream.write("{:20.20}".format(state))
@@ -42,14 +43,28 @@ class DB:
         #Generate file names
         csv_filename = filename + ".csv"
         text_filename = filename + ".data"
+        config_filename = filename + ".config"
              
         # Read the CSV file line by line and write into data file
         with open(csv_filename, "r") as csv_file, open(text_filename, "w") as outfile:
+            csv_reader = csv.reader(csv_file)
+            numRecords = 0
+
             for line in csv_file:
+                # Read and write each record
                 csv_reader = csv.reader([line])
-                row = next(csv_reader)
-            # Write the record to the data file
-                self.writeRecord(outfile, row[0], row[1], row[2], row[3])
+                id, state, city, name = self.__readCSV(csv_reader)
+                self.writeRecord(outfile, id, state, city, name)
+                numRecords += 1
+
+        # Store the number of records
+        self.numRecords = numRecords
+
+        # Write the configuration file
+        with open(config_filename, "w") as config_file:
+            config_file.write(f"numRecords={self.numRecords}\n")
+            config_file.write(f"recordSize={self.recordSize}\n")
+            config_file.write("fields=ID:10,State:20,City:20,Name:50\n")
 
     # #read the database
     def open(self, filename):
@@ -129,7 +144,6 @@ class DB:
     def close(self):
         self.text_filename.close()
 
-# from here down the code is not given
 # main methods from menu: 
 
     def open_database(self):
