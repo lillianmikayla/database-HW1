@@ -10,12 +10,7 @@ class DB:
         self.numRecords = 0
         self.recordSize = 0
         self.dataFileptr = None
-        self.openFlag = False
-        
-    #open: public method
-    def open(colleges):
-        #open file
-        #update values
+        self.openFlag = False       
 
     def __readCSV(self, csv_reader):
         # read and parse a line of the csv file. 
