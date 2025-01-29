@@ -115,3 +115,29 @@ class DB:
     def close(self):
         self.text_filename.close()
 
+# from here down the code is not given
+# main methods from menu: 
+
+    def create_database(self):
+        print("Creating new database")
+
+    def open_database(self):
+        print("Opening database")
+
+    def close_database(self):
+        print("Closing database")
+
+    def display_record(self):
+        print("Displaying record")
+
+    def update_record(self):
+        print("Updating record")
+
+    def create_report(self):
+        print("Creating report")
+
+    def add_record(self):
+        print("Adding record")
+
+    def delete_record(self): 
+        print("Deleting record")
