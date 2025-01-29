@@ -9,16 +9,29 @@ class DB:
         self.numRecords = -1
         self.recordSize = -1
 
-    
+    def __readCSV(self, csv_reader):
+        # read and parse a line of the csv file. 
+        try:
+            row = next(csv_reader)
+            id = row[0]
+            state = row[1]
+            city = row[2]
+            name = row[3]
+        # Display the contents of each record to the screen to test that you are reading it properly.
+            print(f"ID: {id}, State: {state}, City: {city}, Name: {name}")
+            return id, state, city, name
+        except StopIteration:
+            return None
+        
     # Formatting files with spaces so each field is fixed length, i.e. ID field has a fixed length of 10
-    def writeRecord(self, filestream, id, experience, marriage, wage, industry):
+    def writeRecord(self, filestream, id, state, city, name):
         try:
 
             filestream.write("{:10.10}".format(id))
-            filestream.write("{:5.5}".format(experience))
-            filestream.write("{:5.5}".format(marriage))
-            filestream.write("{:20.20}".format(wage))
-            filestream.write("{:30.30}".format(industry))
+            filestream.write("{:20.20}".format(state))
+            filestream.write("{:20.20}".format(city))
+            filestream.write("{:50.50}".format(name))
+          # filestream.write("{:30.30}".format(industry))
             filestream.write("\n")
             return True
         except IOError:
@@ -29,13 +42,14 @@ class DB:
         #Generate file names
         csv_filename = filename + ".csv"
         text_filename = filename + ".data"
-
+             
         # Read the CSV file line by line and write into data file
         with open(csv_filename, "r") as csv_file, open(text_filename, "w") as outfile:
             for line in csv_file:
                 csv_reader = csv.reader([line])
                 row = next(csv_reader)
-                self.writeRecord(outfile, row[0], row[1], row[2], row[3], row[4])
+            # Write the record to the data file
+                self.writeRecord(outfile, row[0], row[1], row[2], row[3])
 
     # #read the database
     def open(self, filename):
@@ -118,9 +132,6 @@ class DB:
 # from here down the code is not given
 # main methods from menu: 
 
-    def create_database(self):
-        print("Creating new database")
-
     def open_database(self):
         print("Opening database")
 
@@ -141,3 +152,4 @@ class DB:
 
     def delete_record(self): 
         print("Deleting record")
+

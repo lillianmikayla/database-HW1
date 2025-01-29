@@ -3,7 +3,11 @@ import os.path
 from Database import DB
 
 def main():
+    #variables
+    filename = "small-colleges"
+
     db = DB() #create an instance of the DB class
+
 
     #main menu
     while True: 
@@ -21,7 +25,8 @@ def main():
         choice = input("Enter choice: ")
 
         if choice == "1":
-            db.create_database()
+            # filename = input("Enter the filename to create: ")
+            db.createDB(filename)
         elif choice == "2":
             db.open_database()
         elif choice == "3":
