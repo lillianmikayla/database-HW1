@@ -17,16 +17,30 @@ class DB:
         #open file
         #update values
 
-    
-    # Formatting files with spaces so each field is fixed length, i.e. ID field has a fixed length of 10
-    def writeRecord(self, filestream, id, experience, marriage, wage, industry):
+    def __readCSV(self, csv_reader):
+        # read and parse a line of the csv file. 
         try:
+            row = next(csv_reader)
+            id = row[0]
+            state = row[1]
+            city = row[2]
+            name = row[3]
+        # Display the contents of each record to the screen to test that you are reading it properly.
+            print(f"ID: {id}, State: {state}, City: {city}, Name: {name}")
+            return id, state, city, name
+        except StopIteration:
+            return None
+        
+    # Formatting files with spaces so each field is fixed length, i.e. ID field has a fixed length of 10
+    def writeRecord(self, filestream, id, state, city, name):
+        try:
+            self.recordSize = 101 # 10 + 20 + 20 + 50 + 1 (1 is for the new line character)
 
             filestream.write("{:10.10}".format(id))
-            filestream.write("{:5.5}".format(experience))
-            filestream.write("{:5.5}".format(marriage))
-            filestream.write("{:20.20}".format(wage))
-            filestream.write("{:30.30}".format(industry))
+            filestream.write("{:20.20}".format(state))
+            filestream.write("{:20.20}".format(city))
+            filestream.write("{:50.50}".format(name))
+          # filestream.write("{:30.30}".format(industry))
             filestream.write("\n")
             return True
         except IOError:
@@ -37,13 +51,28 @@ class DB:
         #Generate file names
         csv_filename = filename + ".csv"
         text_filename = filename + ".data"
-
+        config_filename = filename + ".config"
+             
         # Read the CSV file line by line and write into data file
         with open(csv_filename, "r") as csv_file, open(text_filename, "w") as outfile:
+            csv_reader = csv.reader(csv_file)
+            numRecords = 0
+
             for line in csv_file:
+                # Read and write each record
                 csv_reader = csv.reader([line])
-                row = next(csv_reader)
-                self.writeRecord(outfile, row[0], row[1], row[2], row[3], row[4])
+                id, state, city, name = self.__readCSV(csv_reader)
+                self.writeRecord(outfile, id, state, city, name)
+                numRecords += 1
+
+        # Store the number of records
+        self.numRecords = numRecords
+
+        # Write the configuration file
+        with open(config_filename, "w") as config_file:
+            config_file.write(f"numRecords={self.numRecords}\n")
+            config_file.write(f"recordSize={self.recordSize}\n")
+            config_file.write("fields=ID:10,State:20,City:20,Name:50\n")
 
     # #read the database
     def open(self, filename):
@@ -122,4 +151,27 @@ class DB:
     #close the database
     def close(self):
         self.text_filename.close()
+
+# main methods from menu: 
+
+    def open_database(self):
+        print("Opening database")
+
+    def close_database(self):
+        print("Closing database")
+
+    def display_record(self):
+        print("Displaying record")
+
+    def update_record(self):
+        print("Updating record")
+
+    def create_report(self):
+        print("Creating report")
+
+    def add_record(self):
+        print("Adding record")
+
+    def delete_record(self): 
+        print("Deleting record")
 
