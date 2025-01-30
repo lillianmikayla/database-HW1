@@ -80,19 +80,21 @@ class DB:
             self.numRecords = 10
             self.recordSize = 71
 
-    def readRecord(self, recordNum, id, experience, marriage, wage, industry):
+    def readRecord(self, recordNum): #only search by recordNum??
         status = False
 
         if 0 <= recordNum < self.numRecords:
+            print("reading...") #should I use __readCSV()
             self.text_filename.seek(recordNum * self.recordSize)
             line = self.text_filename.readline().rstrip('\n')
             id[0] = line[:10].strip()
-            experience[0] = line[10:15].strip()
-            marriage[0] = line[15:20].strip()
-            wage[0] = line[20:40].strip()
-            industry[0] = line[40:70].strip()
+            state[0] = line[10:15].strip()
+            town[0] = line[15:20].strip()
+            university[0] = line[20:40].strip()
+            #industry[0] = line[40:70].strip()
             status = True
-            
+        else:
+            print("unable to read")
         return status
 
     #overwrite record method
@@ -151,9 +153,16 @@ class DB:
 
     def open_database(self):
         print("Opening database")
+        self.open("small-colleges")
+        #self.readRecord(00000, 5, "no", 1.56812508, "Personal Service")
 
     def close_database(self):
         print("Closing database")
+        self.close()
+
+    def read_record(self):
+        print("Reading record")
+        self.readRecord(9) 
 
     def display_record(self):
         print("Displaying record")

@@ -18,7 +18,8 @@ def main():
         print("6) Create report")
         print("7) Add record")
         print("8) Delete record")
-        print("9) Quit")
+        print("9) Read record") #delete for part 2
+        print("10) Quit")
 
         choice = input("Enter choice: ")
 
@@ -40,6 +41,8 @@ def main():
             db.add_record()
         elif choice == "8":
             db.delete_record()
+        elif choice == "8":
+            db.read_record()
         elif choice == "9":
             print("Goodbye!")
             break
