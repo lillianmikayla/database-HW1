@@ -28,7 +28,7 @@ def main():
             # filename = input("Enter filename: ")
             db.createDB(filename)
         elif choice == "2":
-            db.open_database()
+            db.open(filename)
         elif choice == "3":
             db.close_database()
         elif choice == "4":

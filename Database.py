@@ -72,6 +72,7 @@ class DB:
     # #read the database
     def open(self, filename):
         self.filestream = filename + ".data"
+        self.configstream = filename + ".config"
         
         if not os.path.isfile(self.filestream):
             print(str(self.filestream)+" not found")
@@ -169,11 +170,6 @@ class DB:
         self.openFlag = False
 
 # main methods from menu: 
-
-    def open_database(self):
-        print("Opening database")
-        self.open("small-colleges")
-        #self.readRecord(00000, 5, "no", 1.56812508, "Personal Service")
 
     def close_database(self):
         print("Closing database")
