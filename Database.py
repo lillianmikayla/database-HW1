@@ -77,21 +77,36 @@ class DB:
             print(str(self.filestream)+" not found")
         else:
             self.text_filename = open(self.filestream, 'r+')
-            self.numRecords = 10
-            self.recordSize = 71
+            self.numRecords = len(self.text_filename.readlines()) #calculates number of lines
+            self.recordSize = os.path.getsize(self.filestream) #calculates byte size
+            print(self.numRecords)
+            print("    ")
+            print(self.recordSize) #checking, can remove whenever
+            self.openFlag = True
 
-    def readRecord(self, recordNum): #only search by recordNum??
+    def readRecord(self, recordNum):
         status = False
 
-        if 0 <= recordNum < self.numRecords:
-            print("reading...") #should I use __readCSV()
+        if (0 <= recordNum < self.numRecords):
+            print("reading...") #error check
             self.text_filename.seek(recordNum * self.recordSize)
             line = self.text_filename.readline().rstrip('\n')
-            id[0] = line[:10].strip()
-            state[0] = line[10:15].strip()
-            town[0] = line[15:20].strip()
-            university[0] = line[20:40].strip()
-            #industry[0] = line[40:70].strip()
+            #Not sure how to do this part, nothing seemed to work
+            # #for line in self.text_filename:
+                #print(line)
+            #print(line[:10].strip())
+            #state = line[10:15].strip()
+            #city = line[15:20].strip()
+            #name = line[20:40].strip()
+            print("ID: ")
+            #print(id)
+            print("State: ")
+            #print(state)
+            print("City: ")
+            #print(city)
+            print("Name: ")
+            #print(name)
+            
             status = True
         else:
             print("unable to read")
@@ -147,7 +162,11 @@ class DB:
 
     #close the database
     def close(self):
-        self.text_filename.close()
+        self.numRecords = 0 #reset instance vars
+        self.recordSize = 0
+        self.text_filename.close() # close file
+        self.dataFileptr = None
+        self.openFlag = False
 
 # main methods from menu: 
 
@@ -162,7 +181,9 @@ class DB:
 
     def read_record(self):
         print("Reading record")
-        self.readRecord(9) 
+        recordNumber = input("Which record would you like to read?") #i guess this could be hard coded, wasnt sure
+        recordNumber = int(recordNumber)
+        self.readRecord(recordNumber)
 
     def display_record(self):
         print("Displaying record")

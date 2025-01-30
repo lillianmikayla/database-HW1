@@ -41,9 +41,9 @@ def main():
             db.add_record()
         elif choice == "8":
             db.delete_record()
-        elif choice == "8":
-            db.read_record()
         elif choice == "9":
+            db.read_record()
+        elif choice == "10":
             print("Goodbye!")
             break
         else:
