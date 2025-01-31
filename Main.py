@@ -18,16 +18,17 @@ def main():
         print("6) Create report")
         print("7) Add record")
         print("8) Delete record")
-        print("9) Quit")
+        print("9) Read record") #delete for part 2
+        print("10) Quit")
 
         choice = input("Enter choice: ")
 
         if choice == "1":
-            filename = "small-colleges" # temporary, will remove this and uncomment line below before submission
+            filename = "small-colleges" # temporary, will remove this and uncomment line below before submission of part 2
             # filename = input("Enter filename: ")
             db.createDB(filename)
         elif choice == "2":
-            db.open_database()
+            db.open(filename)
         elif choice == "3":
             db.close_database()
         elif choice == "4":
@@ -41,6 +42,8 @@ def main():
         elif choice == "8":
             db.delete_record()
         elif choice == "9":
+            db.read_record()
+        elif choice == "10":
             print("Goodbye!")
             break
         else:
