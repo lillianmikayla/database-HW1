@@ -73,8 +73,29 @@ class DB:
     def open(self, filename):
         self.filestream = filename + ".data"
         self.configstream = filename + ".config"
+
+        try:
+            # Open the configuration file to read numRecords and recordSize
+            with open(self.configstream, "r") as config_file:
+                for line in config_file:
+                    if line.startswith("numRecords="):
+                        self.numRecords = int(line.split("=")[1].strip())
+                    elif line.startswith("recordSize="):
+                        self.recordSize = int(line.split("=")[1].strip())
+                print(self.numRecords)
+                print(self.recordSize)
+
+            # Open the data file in read/write mode
+            self.dataFileptr = open(self.filestream, 'r+')
+            self.openFlag = True
+        except FileNotFoundError:
+            print(f"{self.filestream} not found")
+            self.openFlag = False
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            self.openFlag = False
         
-        if not os.path.isfile(self.filestream):
+        """  if not os.path.isfile(self.filestream): 
             print(str(self.filestream)+" not found")
         else:
             self.text_filename = open(self.filestream, 'r+')
@@ -83,35 +104,33 @@ class DB:
             print(self.numRecords)
             print("    ")
             print(self.recordSize) #checking, can remove whenever
-            self.openFlag = True
+            self.openFlag = True """
 
-    def readRecord(self, recordNum):
-        status = False
+    def readRecord(self, recordNum, id, state, city, name):
+        if not self.openFlag:
+            print("Database is not open")
+            return -1  # Data file is not open
 
-        if (0 <= recordNum < self.numRecords):
-            print("reading...") #error check
-            self.text_filename.seek(recordNum * self.recordSize)
-            line = self.text_filename.readline().rstrip('\n')
-            #Not sure how to do this part, nothing seemed to work
-            # #for line in self.text_filename:
-                #print(line)
-            #print(line[:10].strip())
-            #state = line[10:15].strip()
-            #city = line[15:20].strip()
-            #name = line[20:40].strip()
-            print("ID: ")
-            #print(id)
-            print("State: ")
-            #print(state)
-            print("City: ")
-            #print(city)
-            print("Name: ")
-            #print(name)
-            
-            status = True
-        else:
-            print("unable to read")
-        return status
+        if recordNum < 0 or recordNum >= self.numRecords:
+            print("Invalid record number")
+            return -1  # other fail reasons
+
+        try:
+            self.dataFileptr.seek(recordNum * self.recordSize)
+            line = self.dataFileptr.readline().rstrip('\n')
+            if not line.strip():  # Check if the record is empty
+                print("Record is empty")
+                return 0
+            id[0] = line[:10].strip()
+            state[0] = line[10:30].strip()
+            city[0] = line[30:50].strip()
+            name[0] = line[50:100].strip()
+            print(f"ID: {id[0]}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
+            return 1
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return -1
+        
 
     #overwrite record method
     def overwriteRecord(self, record_num, record_id, experience, married, wage, industry):
@@ -165,7 +184,9 @@ class DB:
     def close(self):
         self.numRecords = 0 #reset instance vars
         self.recordSize = 0
-        self.text_filename.close() # close file
+        #self.text_filename.close() # close file
+        if self.dataFileptr:
+            self.dataFileptr.close()
         self.dataFileptr = None
         self.openFlag = False
 
@@ -177,9 +198,13 @@ class DB:
 
     def read_record(self):
         print("Reading record")
-        recordNumber = input("Which record would you like to read?") #i guess this could be hard coded, wasnt sure
+        id = [""]
+        state = [""]
+        city = [""]
+        name = [""]
+        recordNumber = input("Which record would you like to read? ") #i guess this could be hard coded, wasnt sure
         recordNumber = int(recordNumber)
-        self.readRecord(recordNumber)
+        self.readRecord(recordNumber, id, state, city, name)
 
     def display_record(self):
         print("Displaying record")

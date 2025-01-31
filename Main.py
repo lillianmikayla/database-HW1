@@ -24,7 +24,7 @@ def main():
         choice = input("Enter choice: ")
 
         if choice == "1":
-            filename = "small-colleges" # temporary, will remove this and uncomment line below before submission
+            filename = "small-colleges" # temporary, will remove this and uncomment line below before submission of part 2
             # filename = input("Enter filename: ")
             db.createDB(filename)
         elif choice == "2":
