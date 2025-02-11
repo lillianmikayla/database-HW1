@@ -125,7 +125,7 @@ class DB:
             state[0] = line[10:30].strip()
             city[0] = line[30:50].strip()
             name[0] = line[50:100].strip()
-            print(f"ID: {id[0]}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
+            # print(f"ID: {id[0]}, State: {state[0]}, City: {city[0]}, Name: {name[0]}") 
             return 1
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -133,7 +133,7 @@ class DB:
         
 
     #overwrite record method
-    def overwriteRecord(self, record_num, record_id, experience, married, wage, industry):
+    def overwriteRecord(self, record_num, id, state, city, name):
         try:
             # Calculate the byte offset of the record
             offset = record_num * self.recordSize
@@ -142,31 +142,33 @@ class DB:
             self.text_filename.seek(offset)
 
             # Call writeRecord to output the passed-in parameters
-            self.writeRecord(self.text_filename, record_id, experience, married, wage, industry)
+            self.writeRecord(self.text_filename, id, state, city, name)
             return True
         except IOError:
             return False
 
 
-    def binarySearch(self, id, experience, marriage, wage, industry):
+    def binarySearch(self, id, state, city, name):
 
         low = 0
         high = self.numRecords - 1
         self.found = False
         failure = False
 
-        target_id = id[0]  # Do not strip leading zeros
+        target_id = id  # Do not strip leading zeros
+        #print(target_id)
 
         while not self.found and high >= low and not failure:
             self.middle = (low + high) // 2
             try:
                 temp_id = [None]  # Use a list to hold the ID read from the record
-                self.readRecord(self.middle, temp_id, experience, marriage, wage, industry)
+                self.readRecord(self.middle, temp_id, state, city, name)
             except Exception as e:
                 failure = True
                 break
 
             mid_id = temp_id[0]  # Do not strip leading zeros
+            #print(mid_id)
 
 
             if mid_id == target_id:
@@ -176,6 +178,8 @@ class DB:
                 low = self.middle + 1
             else:
                 high = self.middle - 1
+
+        #print(self.found)
 
         return self.found
 
@@ -208,9 +212,20 @@ class DB:
 
     def display_record(self):
         print("Displaying record")
+        id = input("Enter ID: ")
+        state = [""]
+        city = [""]
+        name = [""]
+        status = self.binarySearch(id, state, city, name)
+        if status:
+            print(f"ID: {id}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
+        else:
+            print("Record not found")
+
 
     def update_record(self):
         print("Updating record")
+
 
     def create_report(self):
         print("Creating report")
