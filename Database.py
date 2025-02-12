@@ -139,10 +139,12 @@ class DB:
             offset = record_num * self.recordSize
 
             # Move to the beginning of the specified record
-            self.text_filename.seek(offset)
+            self.dataFileptr.seek(offset)
+            print(self.dataFileptr)
+            print(self.dataFileptr.seek(offset))
 
             # Call writeRecord to output the passed-in parameters
-            self.writeRecord(self.text_filename, id, state, city, name)
+            self.writeRecord(self.dataFileptr, id, state, city, name)
             return True
         except IOError:
             return False
@@ -209,6 +211,7 @@ class DB:
         recordNumber = input("Which record would you like to read? ") #i guess this could be hard coded, wasnt sure
         recordNumber = int(recordNumber)
         self.readRecord(recordNumber, id, state, city, name)
+        print(f"ID: {id[0]}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
 
     def display_record(self):
         print("Displaying record")
@@ -225,13 +228,44 @@ class DB:
 
     def update_record(self):
         print("Updating record")
+        id = input("Enter ID: ")
+        state = [""]
+        city = [""]
+        name = [""]
+        status = self.binarySearch(id, state, city, name)
+        if status:
+            print(f"ID: {id}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
+            print(f"Do you want to change the state, city, or name of the record?")
+            choice = input("Enter state, city, or name: ")
+            if choice == "state":
+                new_state = input("Enter new state: ")
+                self.overwriteRecord(self.middle, id, new_state, city[0], name[0])
+            elif choice == "city":
+                new_city = input("Enter new city: ")
+                self.overwriteRecord(self.middle, id, state[0], new_city, name[0])
+            elif choice == "name":
+                new_name = input("Enter new name: ")
+                self.overwriteRecord(self.middle, id, state[0], city[0], new_name)
+            else:
+                print("Invalid choice")
+        else:
+            print("Record not found")
+        print(f"Updated Record is - ID: {id}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
 
 
     def create_report(self):
         print("Creating report")
+        id = [""]
+        state = [""]
+        city = [""]
+        name = [""]
+        for recordNumber in range(10):
+            self.readRecord(recordNumber, id, state, city, name)
+            print(f"ID: {id[0]}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
 
     def add_record(self):
         print("Adding record")
+
 
     def delete_record(self): 
         print("Deleting record")
