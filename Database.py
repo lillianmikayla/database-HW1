@@ -10,7 +10,8 @@ class DB:
         self.numRecords = 0
         self.recordSize = 0
         self.dataFileptr = None
-        self.openFlag = False       
+        self.openFlag = False   
+        self.overwrite = False    
 
     def __readCSV(self, csv_reader):
         # read and parse a line of the csv file. 
@@ -37,6 +38,8 @@ class DB:
             filestream.write("{:50.50}".format(name))
           # filestream.write("{:30.30}".format(industry))
             filestream.write("\n")
+            if self.overwrite:
+                print(f"Updated record is ID: {id}, State: {state}, City: {city}, Name: {name}")
             return True
         except IOError:
             return False
@@ -140,8 +143,6 @@ class DB:
 
             # Move to the beginning of the specified record
             self.dataFileptr.seek(offset)
-            print(self.dataFileptr)
-            print(self.dataFileptr.seek(offset))
 
             # Call writeRecord to output the passed-in parameters
             self.writeRecord(self.dataFileptr, id, state, city, name)
@@ -208,10 +209,11 @@ class DB:
         state = [""]
         city = [""]
         name = [""]
-        recordNumber = input("Which record would you like to read? ") #i guess this could be hard coded, wasnt sure
+        recordNumber = input("Which record would you like to read? ") 
         recordNumber = int(recordNumber)
-        self.readRecord(recordNumber, id, state, city, name)
-        print(f"ID: {id[0]}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
+        tester = self.readRecord(recordNumber, id, state, city, name)
+        if tester == 1:
+            print(f"ID: {id[0]}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
 
     def display_record(self):
         print("Displaying record")
@@ -234,6 +236,7 @@ class DB:
         name = [""]
         status = self.binarySearch(id, state, city, name)
         if status:
+            self.overwrite = True
             print(f"ID: {id}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
             print(f"Do you want to change the state, city, or name of the record?")
             choice = input("Enter state, city, or name: ")
@@ -250,7 +253,7 @@ class DB:
                 print("Invalid choice")
         else:
             print("Record not found")
-        print(f"Updated Record is - ID: {id}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
+        self.overwrite = False
 
 
     def create_report(self):
