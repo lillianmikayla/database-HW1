@@ -275,6 +275,7 @@ class DB:
             self.readRecord(recordNumber, id, state, city, name)
             print(f"ID: {id[0]}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
 
+    #bonus
     def add_record(self):
         print("Adding record")
         print("Just kidding. This is not implemented yet.")
