@@ -11,7 +11,7 @@ class DB:
         self.recordSize = 0
         self.dataFileptr = None
         self.openFlag = False   
-        self.overwrite = False    
+        #self.overwrite = False    
 
     def __readCSV(self, csv_reader):
         # read and parse a line of the csv file. 
@@ -22,10 +22,16 @@ class DB:
             city = row[2]
             name = row[3]
         # Display the contents of each record to the screen to test that you are reading it properly.
-            print(f"ID: {id}, State: {state}, City: {city}, Name: {name}")
+            #print(f"ID: {id}, State: {state}, City: {city}, Name: {name}")
             return id, state, city, name
         except StopIteration:
             return None
+        
+    def getRecord(self):
+        pass
+
+    def find(self):
+        pass
         
     # Formatting files with spaces so each field is fixed length, i.e. ID field has a fixed length of 10
     def writeRecord(self, filestream, id, state, city, name):
@@ -38,13 +44,17 @@ class DB:
             filestream.write("{:50.50}".format(name))
           # filestream.write("{:30.30}".format(industry))
             filestream.write("\n")
-            if self.overwrite:
-                print(f"Updated record is ID: {id}, State: {state}, City: {city}, Name: {name}")
+            #if self.overwrite:
+                #print(f"Updated record is ID: {id}, State: {state}, City: {city}, Name: {name}")
             return True
         except IOError:
             return False
         
-    #create database
+    # delete record method
+    def deleteRecord(self):
+        pass
+
+    # create database
     def createDB(self,filename):
         #Generate file names
         csv_filename = filename + ".csv"
@@ -72,10 +82,14 @@ class DB:
             config_file.write(f"recordSize={self.recordSize}\n")
             config_file.write("fields=ID:10,State:20,City:20,Name:50\n")
 
-    # #read the database
+    # Open the database
     def open(self, filename):
         self.filestream = filename + ".data"
         self.configstream = filename + ".config"
+
+        if self.openFlag == True:
+            print("A database is already open")
+            return
 
         try:
             # Open the configuration file to read numRecords and recordSize
@@ -85,8 +99,8 @@ class DB:
                         self.numRecords = int(line.split("=")[1].strip())
                     elif line.startswith("recordSize="):
                         self.recordSize = int(line.split("=")[1].strip())
-                print(self.numRecords)
-                print(self.recordSize)
+                print(f"Number of records: {self.numRecords}")
+                print(f"Record size: {self.recordSize}")
 
             # Open the data file in read/write mode
             self.dataFileptr = open(self.filestream, 'r+')
@@ -97,18 +111,8 @@ class DB:
         except Exception as e:
             print(f"An error occurred: {e}")
             self.openFlag = False
-        
-        """  if not os.path.isfile(self.filestream): 
-            print(str(self.filestream)+" not found")
-        else:
-            self.text_filename = open(self.filestream, 'r+')
-            self.numRecords = len(self.text_filename.readlines()) #calculates number of lines
-            self.recordSize = os.path.getsize(self.filestream) #calculates byte size
-            print(self.numRecords)
-            print("    ")
-            print(self.recordSize) #checking, can remove whenever
-            self.openFlag = True """
 
+    # Read a record from the database
     def readRecord(self, recordNum, id, state, city, name):
         if not self.openFlag:
             print("Database is not open")
@@ -150,7 +154,7 @@ class DB:
         except IOError:
             return False
 
-
+    # binary search that finds record based on id
     def binarySearch(self, id, state, city, name):
 
         low = 0
@@ -189,6 +193,9 @@ class DB:
 
     #close the database
     def close(self):
+        if not self.openFlag:
+            print("No database open.")
+            return
         self.numRecords = 0 #reset instance vars
         self.recordSize = 0
         #self.text_filename.close() # close file
@@ -196,15 +203,17 @@ class DB:
             self.dataFileptr.close()
         self.dataFileptr = None
         self.openFlag = False
+        print("Database closed successfully.")
 
 # main methods from menu: 
 
     def close_database(self):
-        print("Closing database")
+        print("Closing database...")
         self.close()
 
+    # don't need anymore, tester function 
     def read_record(self):
-        print("Reading record")
+        #print("Reading record")
         id = [""]
         state = [""]
         city = [""]
@@ -217,7 +226,7 @@ class DB:
 
     def display_record(self):
         print("Displaying record")
-        id = input("Enter ID: ")
+        id = input("Display complete record for which ID? ")
         state = [""]
         city = [""]
         name = [""]
@@ -229,17 +238,17 @@ class DB:
 
 
     def update_record(self):
-        print("Updating record")
-        id = input("Enter ID: ")
+        #print("Updating record")
+        id = input("Enter ID of record to update: ")
         state = [""]
         city = [""]
         name = [""]
         status = self.binarySearch(id, state, city, name)
         if status:
-            self.overwrite = True
+            #self.overwrite = True
             print(f"ID: {id}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
             print(f"Do you want to change the state, city, or name of the record?")
-            choice = input("Enter state, city, or name: ")
+            choice = input("Enter choice (state/city/name): ")
             if choice == "state":
                 new_state = input("Enter new state: ")
                 self.overwriteRecord(self.middle, id, new_state, city[0], name[0])
@@ -253,11 +262,11 @@ class DB:
                 print("Invalid choice")
         else:
             print("Record not found")
-        self.overwrite = False
+        #self.overwrite = False
 
 
     def create_report(self):
-        print("Creating report")
+        print("Creating report...")
         id = [""]
         state = [""]
         city = [""]
@@ -268,9 +277,20 @@ class DB:
 
     def add_record(self):
         print("Adding record")
+        print("Just kidding. This is not implemented yet.")
 
 
     def delete_record(self): 
-        print("Deleting record")
-
-    #comment 
+        #print("Deleting record")
+        id = input("Input record ID to delete:")
+        state = [""]
+        city = [""]
+        name = [""]
+        status = self.binarySearch(id, state, city, name)
+        if status:
+            state = ""
+            city = ""
+            name = ""
+            self.overwriteRecord(self.middle, id, state, city, name)
+        else:
+            print("Record not found")
