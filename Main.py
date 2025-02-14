@@ -38,7 +38,7 @@ def main():
             db.update_record()
         elif choice == "6":
             db.create_report()
-        elif choice == "7":
+        elif choice == "7": #bonus
             db.add_record()
         elif choice == "8":
             db.delete_record()

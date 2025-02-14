@@ -225,7 +225,11 @@ class DB:
             print(f"ID: {id[0]}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
 
     def display_record(self):
-        print("Displaying record")
+        #print("Displaying record")
+        if not self.openFlag:
+            print("No database open. Display record failed.")
+            return
+        
         id = input("Display complete record for which ID? ")
         state = [""]
         city = [""]
@@ -239,6 +243,10 @@ class DB:
 
     def update_record(self):
         #print("Updating record")
+        if not self.openFlag:
+            print("No database open. Update record failed.")
+            return
+        
         id = input("Enter ID of record to update: ")
         state = [""]
         city = [""]
@@ -266,14 +274,23 @@ class DB:
 
 
     def create_report(self):
+        if not self.openFlag:
+            print("No database open. Create report failed.")
+            return
+        
         print("Creating report...")
         id = [""]
         state = [""]
         city = [""]
         name = [""]
-        for recordNumber in range(10):
-            self.readRecord(recordNumber, id, state, city, name)
-            print(f"ID: {id[0]}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
+        recordNumber = 0
+        non_deleted_count = 0
+        while non_deleted_count < 10 and recordNumber < self.numRecords:
+            status = self.readRecord(recordNumber, id, state, city, name)
+            if status == 1 and state[0] != "":  # Check if the record is not deleted
+                print(f"ID: {id[0]}, State: {state[0]}, City: {city[0]}, Name: {name[0]}")
+                non_deleted_count += 1
+            recordNumber += 1
 
     #bonus
     def add_record(self):
@@ -283,7 +300,11 @@ class DB:
 
     def delete_record(self): 
         #print("Deleting record")
-        id = input("Input record ID to delete:")
+        if not self.openFlag:
+            print("No database open. Delete record failed.")
+            return
+        
+        id = input("Input record ID to delete: ")
         state = [""]
         city = [""]
         name = [""]
